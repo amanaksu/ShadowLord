@@ -48,7 +48,7 @@ def test():
 	"""
 	retVal = 1
 	try:
-		tests = unittest.TestLoader.discover("test", pattern="test*.py")
+		tests = unittest.TestLoader().discover("test", pattern="test*.py")
 		result = unittest.TextTestRunner(verbosity=2).run(tests)
 		if result.wasSuccessful():
 			retVal = 0
