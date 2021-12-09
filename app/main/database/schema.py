@@ -4,6 +4,7 @@
 # 설명 : DB 테이블 Schema
 #
 # [개발 로그]
+# 0.1.1		2021.12.09		User 클래스 커스텀
 # 0.1.0		2021.12.08		공통 DB 테이블 & User 클래스
 #
 
@@ -29,7 +30,7 @@ from main.database.conn import Base
 
 # 전역 변수
 __author__ = "amanaksu@gmail.com"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 
 class BaseMixin:
