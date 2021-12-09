@@ -41,8 +41,10 @@ class DevelopmentConfig(Config):
 	"""
 	API_ENV_SERVER: str = "127.0.0.1"
 	API_ENV_PORT: int = 8000
-	PROJ_RELOAD: bool = True
 	DB_URL: str = "mysql+pymysql://travis:3584ksu!Q@localhost/shadowLord?charset=utf8mb4"
+	PROJ_RELOAD: bool = True
+	TRUSTED_HOSTS = ["*"]
+	ALLOWED_HOSTS = ["*"]
 
 
 @dataclass
@@ -50,7 +52,12 @@ class ProductionConfig(Config):
 	"""
 	운영 환경 설정
 	"""
+	API_ENV_SERVER: str = ""
+	API_ENV_PORT: int = -1
+	DB_URL: str = ""
 	PROJ_RELOAD: bool = False
+	TRUSTED_HOSTS = ["*"]
+	ALLOWED_HOSTS = ["*"]
 
 
 def to_instance():

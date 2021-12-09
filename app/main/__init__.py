@@ -14,11 +14,14 @@
 
 # 서드파티 라이브러리
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 # 자체 라이브러리
-from main.common import config
+from main.common import config, consts
 from main.database.conn import db
 from main.routes import index, auth
+from middlewares.token_validator import AccessControl
+from middlewares.trusted_hosts import TrustedHostMiddleware
 
 # 전역 변수
 __author__ = "amanaksu@gmail.com"
@@ -42,6 +45,9 @@ def create_app():
 	# 레지스 초기화
 
 	# 미들웨어 정의
+	app.add_middleware(AccessControl, except_path_list=consts.EXCEPT_PATH_LIST, except_path_regex=consts.EXCEPT_PATH_REGEX)
+	app.add_middleware(CORSMiddleware, allow_origins=conf_dict.get("ALLOWED_HOSTS", []), allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+	app.add_middleware(TrustedHostMiddleware, allowed_hosts=conf_dict.get("TRUSTED_HOSTS", []), except_path_list=consts.EXCEPT_PATH_LIST)
 
 	# 라우터 정의
 	app.include_router(index.router)

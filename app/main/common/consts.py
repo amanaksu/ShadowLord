@@ -28,3 +28,7 @@ RUN_ENV			= "dev"
 JWT_EXPIRES_DELTA_DAYS=30
 JWT_SECRET="!Qhdks00!"
 JWT_ALGORITHM="HS256"
+
+# Except
+EXCEPT_PATH_LIST=["/", "/openapi.json", "/health"]
+EXCEPT_PATH_REGEX="^(/docs|/redoc|/auth)"

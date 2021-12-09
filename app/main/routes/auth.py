@@ -8,6 +8,19 @@
 # 0.1.1		2021.12.09		사용자 등록 함수 생성 (Register)
 # 0.1.0		2021.12.09		사용자 인증
 #
+#
+# 응답코드 정의
+# 200	OK
+# 201	Created
+# 400	Bad Request
+# 401	Unauthorized
+# 403	Forbidden
+# 404	Not Found
+# 405	Method Not Allowed
+# 500	Internal Error
+# 502	Bad Gateway
+# 504	Timeout
+
 
 # 내장 라이브러리
 from datetime import datetime, timedelta
@@ -34,7 +47,7 @@ __version__ = "0.1.2"
 
 router = APIRouter()
 
-@router.post("/register/{auth_type}", status_code=200, response_model=Token)
+@router.post("/register/{auth_type}", status_code=201, response_model=Token)
 async def register(auth_type: AuthType, reg_info: UserRegister, session: Session=Depends(db.session)):
 	"""
 	가입 API
@@ -45,7 +58,7 @@ async def register(auth_type: AuthType, reg_info: UserRegister, session: Session
 	"""
 	if auth_type == AuthType.email:
 		# 인증에 필요한 정보가 있는지 확인한다. 
-		if not (reg_info.email or reg_info.pw):
+		if not reg_info.email or not reg_info.pw:
 			return JSONResponse(status_code=400, content=dict(msg="Email and PW must be provided."))
 
 		# 기 가입 여부를 확인한다. 
