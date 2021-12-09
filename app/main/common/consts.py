@@ -19,7 +19,12 @@ __version__ = "0.1.0"
 
 # 환경 변수
 
-# Option
+# 실행모드
 # - dev : 개발모드  (development mode)
 # - prod : 제품모드 (release mode)
 RUN_ENV			= "dev"		
+
+# JWT
+JWT_EXPIRES_DELTA_DAYS=30
+JWT_SECRET="!Qhdks00!"
+JWT_ALGORITHM="HS256"

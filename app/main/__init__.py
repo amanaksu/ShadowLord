@@ -4,6 +4,7 @@
 # 설명 : 
 #
 # [개발 로그]
+# 0.1.3		2021.12.09		인증 로직 추가 
 # 0.1.2		2021.12.08		Route 상태 체크용 경로 추가 ("/")
 # 0.1.1		2021.12.08		DB 연결 설정
 # 0.1.0		2021.12.07		App 생성 ProtoType 설계
@@ -17,11 +18,11 @@ from fastapi import FastAPI
 # 자체 라이브러리
 from main.common import config
 from main.database.conn import db
-from main.routes import index
+from main.routes import index, auth
 
 # 전역 변수
 __author__ = "amanaksu@gmail.com"
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 # 환경 변수
 
@@ -44,6 +45,7 @@ def create_app():
 
 	# 라우터 정의
 	app.include_router(index.router)
+	app.include_router(auth.router, tags=["Authentication"], prefix="/auth")
 
 	return app
 
