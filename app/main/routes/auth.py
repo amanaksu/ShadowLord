@@ -4,6 +4,8 @@
 # 설명 : 
 #
 # [개발 로그]
+# 0.1.2		2021.12.09		사용자 로그인 함수 생성 (Login)
+# 0.1.1		2021.12.09		사용자 등록 함수 생성 (Register)
 # 0.1.0		2021.12.09		사용자 인증
 #
 
@@ -11,7 +13,7 @@
 from datetime import datetime, timedelta
 
 # 서드파티 라이브러리
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, responses
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.sqltypes import JSON
 from starlette.responses import JSONResponse
@@ -28,7 +30,7 @@ from main.database.conn import db
 
 # 전역 변수
 __author__ = "amanaksu@gmail.com"
-__version__ = "0.1.0"
+__version__ = "0.1.2"
 
 router = APIRouter()
 
@@ -60,7 +62,7 @@ async def register(auth_type: AuthType, reg_info: UserRegister, session: Session
 	return JSONResponse(status_code=400, content=dict(msg="NOT_SUPPORTED"))
 
 
-@router.post("/login/{auth_type}", status_code=200)
+@router.post("/login/{auth_type}", status_code=200, response_model=Token)
 async def login(auth_type: AuthType, user_info: UserRegister):
 	"""
 	로그인 API
@@ -68,10 +70,27 @@ async def login(auth_type: AuthType, user_info: UserRegister):
 	:param	user_info: 로그인 정보
 	:return:
 	"""
-	pass
+	if auth_type == AuthType.email:
+		# 로그인에 필요한 정보가 있는지 확인한다. 
+		if not (user_info.email or user_info.pw):
+			return JSONResponse(status_code=400, content=dict(msg="Email and PW must be provided."))
 
+		# 기 가입 여부를 확인한다. 
+		is_exist = await is_email_exist(user_info.email)
+		if not is_exist:
+			return JSONResponse(status_code=400, content=dict(msg="NO_MATCH_USER"))
 
+		# 인증한다. 
+		user = Users.get(email=user_info.email)
+		is_verified = bcrypt.checkpw(user_info.pw.encode("utf-8"), user.pw.encode("utf-8"))
+		if not is_verified:
+			return JSONResponse(status_code=400 ,content=dict(msg="NO_MATCH_USER"))
 
+		# 토큰을 생성한다. 
+		token = dict(Authorization=f"Bearer {create_access_token(data=UserToken.from_orm(user).dict(exclude={'pw'}),)}")
+		return token
+
+	return JSONResponse(status_code=400, content=dict(msg="NOT_SUPPORTED"))
 
 
 async def is_email_exist(email: str):
