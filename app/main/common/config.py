@@ -8,8 +8,10 @@
 #
 
 # 내장 라이브러리
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
+from typing import List
 import os
+
 
 # 서드파티 라이브러리
 
@@ -29,10 +31,13 @@ class Config:
 	"""
 	공통 설정
 	"""
+	# 공통 적용
 	BASE_DIR = basedir
-
 	DB_POOL_RECYCLE: int = 900		# Seconds
 	DB_ECHO: bool = True
+
+	# TRUSTED_HOSTS: List[str] = field(default_factory=list)
+	# ALLOWED_HOSTS: List[str] = field(default_factory=list)
 
 @dataclass
 class DevelopmentConfig(Config):
@@ -43,22 +48,18 @@ class DevelopmentConfig(Config):
 	API_ENV_PORT: int = 8000
 	DB_URL: str = "mysql+pymysql://travis:3584ksu!Q@localhost/shadowLord?charset=utf8mb4"
 	PROJ_RELOAD: bool = True
-	TRUSTED_HOSTS = ["*"]
-	ALLOWED_HOSTS = ["*"]
+	
+	TRUSTED_HOSTS: List[str] = ["*"]
 
+	
 
 @dataclass
 class ProductionConfig(Config):
 	"""
 	운영 환경 설정
 	"""
-	API_ENV_SERVER: str = ""
-	API_ENV_PORT: int = -1
-	DB_URL: str = ""
 	PROJ_RELOAD: bool = False
-	TRUSTED_HOSTS = ["*"]
-	ALLOWED_HOSTS = ["*"]
-
+	
 
 def to_instance():
 	"""
@@ -66,10 +67,10 @@ def to_instance():
 	:return:
 	"""
 	config = dict(
-		dev=DevelopmentConfig(),
-		prod=ProductionConfig()
+		dev=DevelopmentConfig,
+		prod=ProductionConfig
 	)
-	return config.get(os.getenv("RUN_ENV", "dev"))
+	return config.get(os.getenv("RUN_ENV", "dev"))()
 
 def to_dict():
 	"""

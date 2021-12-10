@@ -45,7 +45,7 @@ from main.database.conn import db
 __author__ = "amanaksu@gmail.com"
 __version__ = "0.1.2"
 
-router = APIRouter()
+router = APIRouter(prefix="/auth")
 
 @router.post("/register/{auth_type}", status_code=201, response_model=Token)
 async def register(auth_type: AuthType, reg_info: UserRegister, session: Session=Depends(db.session)):

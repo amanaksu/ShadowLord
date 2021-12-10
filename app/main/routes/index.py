@@ -13,6 +13,7 @@ from datetime import datetime
 # 서드파티 라이브러리
 from fastapi import APIRouter
 from starlette.responses import Response
+from starlette.requests import Request
 
 # 자체 라이브러리
 
@@ -29,6 +30,16 @@ router = APIRouter()
 async def index():
 	"""
 	ELB 상태 체크용 API
+	:return:
+	"""
+	current_time = datetime.utcnow()
+	return Response(f"ShadowLord API (UTC : {current_time.strftime('%Y.%m.%d %H:%M:%S')})")
+
+
+@router.get("/test")
+async def index(request: Request):
+	"""
+	ELB 상태체크용 API
 	:return:
 	"""
 	current_time = datetime.utcnow()

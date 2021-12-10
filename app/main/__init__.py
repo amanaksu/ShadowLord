@@ -37,6 +37,7 @@ def create_app():
 	"""
 	# App 초기화
 	conf_dict = config.to_dict()
+	print(conf_dict)
 	app = FastAPI()
 	db.init_app(app, **conf_dict)
 
@@ -46,12 +47,12 @@ def create_app():
 
 	# 미들웨어 정의
 	app.add_middleware(AccessControl, except_path_list=consts.EXCEPT_PATH_LIST, except_path_regex=consts.EXCEPT_PATH_REGEX)
-	app.add_middleware(CORSMiddleware, allow_origins=conf_dict.get("ALLOWED_HOSTS", []), allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
-	app.add_middleware(TrustedHostMiddleware, allowed_hosts=conf_dict.get("TRUSTED_HOSTS", []), except_path_list=consts.EXCEPT_PATH_LIST)
+	app.add_middleware(CORSMiddleware, allow_origins=conf_dict.get("ALLOWED_HOSTS"), allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+	app.add_middleware(TrustedHostMiddleware, allowed_hosts=conf_dict.get("TRUSTED_HOSTS"), except_path_list=["/health"])
 
 	# 라우터 정의
 	app.include_router(index.router)
-	app.include_router(auth.router, tags=["Authentication"], prefix="/auth")
+	app.include_router(auth.router, tags=["Authentication"], prefix="/api")
 
 	return app
 
