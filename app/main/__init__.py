@@ -13,21 +13,24 @@
 # 내장 라이브러리
 
 # 서드파티 라이브러리
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from fastapi.security import APIKeyHeader
 from starlette.middleware.cors import CORSMiddleware
 
 # 자체 라이브러리
 from main.common import config, consts
 from main.database.conn import db
-from main.routes import index, auth
+from main.routes import index, auth, users
 from middlewares.token_validator import AccessControl
 from middlewares.trusted_hosts import TrustedHostMiddleware
+
+# 환경 변수
 
 # 전역 변수
 __author__ = "amanaksu@gmail.com"
 __version__ = "0.1.3"
 
-# 환경 변수
+API_KEY_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
 
 
 def create_app():
@@ -53,6 +56,7 @@ def create_app():
 	# 라우터 정의
 	app.include_router(index.router)
 	app.include_router(auth.router, tags=["Authentication"], prefix="/api")
+	app.include_router(users.router, tags=["Users"], prefix="/api", dependencies=[Depends(API_KEY_HEADER)])
 
 	return app
 
